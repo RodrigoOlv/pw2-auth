@@ -11,10 +11,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
@@ -34,6 +31,16 @@ public class AuthController {
             return ResponseEntity.ok(new TokenDTO(token, "Bearer"));
         } catch (AuthenticationException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/validarToken")
+    public boolean validarToken(@RequestParam("token") String token) {
+        try {
+            String hash =token.substring(7, token.length());
+            return tokenService.isTokenValido(hash);
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
         }
     }
 
